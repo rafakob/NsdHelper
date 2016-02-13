@@ -20,7 +20,7 @@ public class NsdHelper implements DiscoveryTimer.OnTimeoutListener {
     private boolean mRegistered = false;
     private NsdListenerRegistration mRegistrationListener;
     private NsdService mRegisteredService;
-    private NsdServiceInfo mRegisteredServiceInfo;
+    private NsdServiceInfo mRegisteredServiceInfo = new NsdServiceInfo();
 
 
     // Discovery
