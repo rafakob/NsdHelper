@@ -1,3 +1,5 @@
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-NsdHelper-brightgreen.svg?style=flat)](http://android-arsenal.com/details/1/3167)
+
 # NsdHelper #
 **NsdHelper** is a wrapper/helper library for [Android Network Service Discovery](http://developer.android.com/training/connect-devices-wirelessly/nsd.html). I've created it for my own purpose (mostly for discovering HTTP services in LAN) to simplify the whole NSD process. I also added couple of nice features (timeout, detailed log) and fixed a [#71367](https://code.google.com/p/android/issues/detail?id=71367) using simple FIFO queue. All public methods are well documented so it should be pretty straightforward to use.
 
@@ -111,4 +113,22 @@ D/NsdHelper: Service resolved -> ds115, DS115.lan/192.168.1.102, port 5000, ._ht
 D/NsdHelper: Registered -> Chat
 D/NsdHelper: Service discovery stopped.
 D/NsdHelper: Unregistered -> Chat
+```
+
+
+### License ###
+```
+Copyright 2016 Rafał Kobyłko
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 ```
