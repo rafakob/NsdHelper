@@ -1,3 +1,5 @@
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-NsdHelper-brightgreen.svg?style=flat)](http://android-arsenal.com/details/1/3167)
+
 # NsdHelper #
 **NsdHelper** is a wrapper/helper library for [Android Network Service Discovery](http://developer.android.com/training/connect-devices-wirelessly/nsd.html). I've created it for my own purpose (mostly for discovering HTTP services in LAN) to simplify the whole NSD process. I also added couple of nice features (timeout, detailed log) and fixed a [#71367](https://code.google.com/p/android/issues/detail?id=71367) using simple FIFO queue. All public methods are well documented so it should be pretty straightforward to use.
 
