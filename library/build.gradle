@@ -1,6 +1,8 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
 
+def versionMajor = 0
+def versionMinor = 1
+def versionPatch = 4
 
 android {
     compileSdkVersion 23
@@ -9,8 +11,8 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 4
-        versionName "0.1.4"
+        versionCode versionMajor * 1000000 + versionMinor * 1000 + versionPatch
+        versionName "${versionMajor}.${versionMinor}.${versionPatch}"
     }
     buildTypes {
         release {
@@ -25,20 +27,29 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
-// build a jar with source files
-task sourcesJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'nsd-helper'
+
+    publishedGroupId = 'com.rafakob'
+    libraryName = 'NsdHelper'
+    artifact = 'nsd-helper'
+
+    libraryDescription = 'Network Service Discovery helper for Android'
+
+    siteUrl = 'https://github.com/rafakob/NsdHelper'
+    gitUrl = 'https://github.com/rafakob/NsdHelper.git'
+
+    libraryVersion = "${versionMajor}.${versionMinor}.${versionPatch}"
+
+    developerId = 'rafakob'
+    developerName = 'Rafał Kobyłko'
+    developerEmail = 'rafakob@gmail.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
 }
 
-task javadoc(type: Javadoc) {
-    failOnError false
-    source = android.sourceSets.main.java.sourceFiles
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-}
-
-// build a jar with javadoc
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
+apply from: "lib-install.gradle"
+apply from: 'lib-bintray.gradle'
