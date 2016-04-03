@@ -14,7 +14,7 @@ import java.net.ServerSocket;
 public class NsdHelper implements DiscoveryTimer.OnTimeoutListener {
     private static final String TAG = "NsdHelper";
     private final NsdManager mNsdManager;
-    private final NsdListener mNsdListener;
+    private NsdListener mNsdListener;
 
     // Registration
     private boolean mRegistered = false;
@@ -39,12 +39,30 @@ public class NsdHelper implements DiscoveryTimer.OnTimeoutListener {
     private boolean mLogEnabled = false;
 
     /**
+     * @param nsdManager Android {@link NsdManager}.
+     */
+    public NsdHelper(NsdManager nsdManager) {
+        this.mNsdManager = nsdManager;
+        this.mDiscoveryTimer = new DiscoveryTimer(this, mDiscoveryTimeout);
+        this.mResolveQueue = new ResolveQueue(this);
+    }
+
+    /**
      * @param nsdManager  Android {@link NsdManager}.
      * @param nsdListener Service discovery listener.
      */
     public NsdHelper(NsdManager nsdManager, NsdListener nsdListener) {
         this.mNsdManager = nsdManager;
         this.mNsdListener = nsdListener;
+        this.mDiscoveryTimer = new DiscoveryTimer(this, mDiscoveryTimeout);
+        this.mResolveQueue = new ResolveQueue(this);
+    }
+
+    /**
+     * @param context Context is only needed to create {@link NsdManager} instance.
+     */
+    public NsdHelper(Context context) {
+        this.mNsdManager = (NsdManager) context.getSystemService(Context.NSD_SERVICE);
         this.mDiscoveryTimer = new DiscoveryTimer(this, mDiscoveryTimeout);
         this.mResolveQueue = new ResolveQueue(this);
     }
@@ -58,6 +76,14 @@ public class NsdHelper implements DiscoveryTimer.OnTimeoutListener {
         this.mNsdListener = nsdListener;
         this.mDiscoveryTimer = new DiscoveryTimer(this, mDiscoveryTimeout);
         this.mResolveQueue = new ResolveQueue(this);
+    }
+
+    public NsdListener getNsdListener() {
+        return mNsdListener;
+    }
+
+    public void setNsdListener(NsdListener nsdListener) {
+        mNsdListener = nsdListener;
     }
 
     /**
@@ -106,8 +132,6 @@ public class NsdHelper implements DiscoveryTimer.OnTimeoutListener {
      * and {@link com.rafakob.nsdhelper.NsdListener#onNsdDiscoveryFinished()} will be called.
      * Default timeout is set to 15 seconds.
      * Set 0 to infinite.
-     *
-     * @param seconds Timeout in seconds.
      */
     public void setDiscoveryTimeout(int seconds) {
         if (seconds < 0)
@@ -206,8 +230,8 @@ public class NsdHelper implements DiscoveryTimer.OnTimeoutListener {
             mDiscoveryStarted = false;
             mDiscoveryTimer.cancel();
             mNsdManager.stopServiceDiscovery(mDiscoveryListener);
-
-            mNsdListener.onNsdDiscoveryFinished();
+            if (mNsdListener != null)
+                mNsdListener.onNsdDiscoveryFinished();
         }
     }
 
@@ -247,12 +271,14 @@ public class NsdHelper implements DiscoveryTimer.OnTimeoutListener {
         mRegistered = true;
         mRegisteredServiceInfo.setServiceName(serviceName);
         mRegisteredService = new NsdService(mRegisteredServiceInfo);
-        mNsdListener.onNsdRegistered(mRegisteredService);
+        if (mNsdListener != null)
+            mNsdListener.onNsdRegistered(mRegisteredService);
     }
 
     void onNsdServiceFound(NsdServiceInfo foundService) {
         mDiscoveryTimer.reset();
-        mNsdListener.onNsdServiceFound(new NsdService(foundService));
+        if (mNsdListener != null)
+            mNsdListener.onNsdServiceFound(new NsdService(foundService));
         if (mAutoResolveEnabled)
             mResolveQueue.enqueue(foundService);
     }
@@ -260,11 +286,13 @@ public class NsdHelper implements DiscoveryTimer.OnTimeoutListener {
     void onNsdServiceResolved(NsdServiceInfo resolvedService) {
         mResolveQueue.next();
         mDiscoveryTimer.reset();
-        mNsdListener.onNsdServiceResolved(new NsdService(resolvedService));
+        if (mNsdListener != null)
+            mNsdListener.onNsdServiceResolved(new NsdService(resolvedService));
     }
 
     void onNsdServiceLost(NsdServiceInfo lostService) {
-        mNsdListener.onNsdServiceLost(new NsdService(lostService));
+        if (mNsdListener != null)
+            mNsdListener.onNsdServiceLost(new NsdService(lostService));
     }
 
     void logMsg(String msg) {
@@ -274,10 +302,11 @@ public class NsdHelper implements DiscoveryTimer.OnTimeoutListener {
 
     void logError(String errorMessage, int errorCode, String errorSource) {
         Log.e(TAG, errorMessage);
-        mNsdListener.onNsdError(errorMessage, errorCode, errorSource);
+        if (mNsdListener != null)
+            mNsdListener.onNsdError(errorMessage, errorCode, errorSource);
     }
 
-    NsdServiceInfo getRegisteredServiceInfo(){
+    NsdServiceInfo getRegisteredServiceInfo() {
         return mRegisteredServiceInfo;
     }
 
