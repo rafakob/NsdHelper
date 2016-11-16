@@ -177,7 +177,17 @@ public class NsdHelper implements DiscoveryTimer.OnTimeoutListener {
      * @param serviceType        Service type.
      */
     public void registerService(String desiredServiceName, String serviceType) {
-        int port = findAvaiablePort();
+        registerService(desiredServiceName, serviceType, findAvaiablePort());
+    }
+
+    /**
+     * Register new service with given serivce name, type and port.
+     *
+     * @param desiredServiceName Desired service name. If the name already exists in network it will be change to something like 'AppChat (1)'.
+     * @param serviceType        Service type.
+     * @param port               Service port.
+     */
+    public void registerService(String desiredServiceName, String serviceType, int port) {
         if (port == 0) return;
 
         mRegisteredServiceInfo = new NsdServiceInfo();
